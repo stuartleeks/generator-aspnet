@@ -262,6 +262,7 @@ var AspnetGenerator = yeoman.generators.Base.extend({
         this.fs.copyTpl(this.templatePath('project.json'), this.applicationName + '/project.json', this.templatedata);
         this.fs.copy(this.templatePath('README.md'), this.applicationName + '/README.md');
         this.fs.copyTpl(this.templatePath('Startup.cs'), this.applicationName + '/Startup.cs', this.templatedata);
+        this.fs.copyTpl(this.templatePath('Program.cs'), this.applicationName + '/Program.cs', this.templatedata);
         // Controllers
         this.fs.copyTpl(this.templatePath('Controllers/HomeController.cs'), this.applicationName + '/Controllers/HomeController.cs', this.templatedata);
         // Views
@@ -275,6 +276,8 @@ var AspnetGenerator = yeoman.generators.Base.extend({
         // If the developer has placed anything in overrides/ui-module/project-type/**/* then use it
         this.fs.copyTpl(this.templatePath('/../../overrides/' + this.ui + '/' + this.type + '/**/*'), this.applicationName + '/', this.templatedata);
         
+        this.template(this.sourceRoot() + '/NuGet-ci.config', this.applicationName + '/NuGet.config', this.templatedata); // REMOVE this for release of dotnet core - used to direct to ci feeds until then ;-)
+ 
         break;
       case 'nancy':
         this.sourceRoot(path.join(__dirname, '../templates/projects/' + this.type));
@@ -319,22 +322,20 @@ var AspnetGenerator = yeoman.generators.Base.extend({
     this.log('\r\n');
     this.log('Your project is now created, you can use the following commands to get going');
     this.log(chalk.green('    cd "' + this.applicationName + '"'));
-    this.log(chalk.green('    dnu restore'));
-    this.log(chalk.green('    dnu build') + ' (optional, build will also happen when it\'s run)');
+    this.log(chalk.green('    dotnet restore'));
+    this.log(chalk.green('    dotnet build') + ' (optional, build will also happen when it\'s run)');
 
     switch (this.type) {
       case 'console':
-        this.log(chalk.green('    dnx run'));
-        break;
       case 'empty':
       case 'nancy':
       case 'web':
       case 'webapi':
       case 'webbasic':
-        this.log(chalk.green('    dnx web'));
+        this.log(chalk.green('    dotnet run'));
         break;
       case 'unittest':
-        this.log(chalk.green('    dnx test'));
+        this.log(chalk.green('    dotnet test'));
         break;
     }
 
