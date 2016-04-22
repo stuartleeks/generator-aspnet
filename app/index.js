@@ -175,6 +175,10 @@ var AspnetGenerator = yeoman.generators.Base.extend({
         this.copy(this.sourceRoot() + '/../../gitignore.txt', this.applicationName + '/.gitignore');
 
         this.template(this.sourceRoot() + '/Startup.cs', this.applicationName + '/Startup.cs', this.templatedata);
+        
+        this.template(this.sourceRoot() + '/Program.cs', this.applicationName + '/Program.cs', this.templatedata);
+        
+        this.template(this.sourceRoot() + '/NuGet-ci.config', this.applicationName + '/Nuget.config', this.templatedata); // REMOVE this for release of dotnet core - used to direct to ci feeds until then ;-)
 
         this.template(this.sourceRoot() + '/project.json', this.applicationName + '/project.json', this.templatedata);
 
@@ -319,22 +323,20 @@ var AspnetGenerator = yeoman.generators.Base.extend({
     this.log('\r\n');
     this.log('Your project is now created, you can use the following commands to get going');
     this.log(chalk.green('    cd "' + this.applicationName + '"'));
-    this.log(chalk.green('    dnu restore'));
-    this.log(chalk.green('    dnu build') + ' (optional, build will also happen when it\'s run)');
+    this.log(chalk.green('    dotnet restore'));
+    this.log(chalk.green('    dotnet build') + ' (optional, build will also happen when it\'s run)');
 
     switch (this.type) {
       case 'console':
-        this.log(chalk.green('    dnx run'));
-        break;
       case 'empty':
       case 'nancy':
       case 'web':
       case 'webapi':
       case 'webbasic':
-        this.log(chalk.green('    dnx web'));
+        this.log(chalk.green('    dotnet run'));
         break;
       case 'unittest':
-        this.log(chalk.green('    dnx test'));
+        this.log(chalk.green('    dotnet test'));
         break;
     }
 
