@@ -175,6 +175,10 @@ var AspnetGenerator = yeoman.generators.Base.extend({
         this.copy(this.sourceRoot() + '/../../gitignore.txt', this.applicationName + '/.gitignore');
 
         this.template(this.sourceRoot() + '/Startup.cs', this.applicationName + '/Startup.cs', this.templatedata);
+        
+        this.template(this.sourceRoot() + '/Program.cs', this.applicationName + '/Program.cs', this.templatedata);
+        
+        this.template(this.sourceRoot() + '/NuGet-ci.config', this.applicationName + '/Nuget.config', this.templatedata); // REMOVE this for release of dotnet core - used to direct to ci feeds until then ;-)
 
         this.template(this.sourceRoot() + '/project.json', this.applicationName + '/project.json', this.templatedata);
 
