@@ -16,12 +16,16 @@ var NamedGenerator = module.exports = function NamedGenerator() {
 util.inherits(NamedGenerator, ScriptBase);
 
 NamedGenerator.prototype.createNamedItem = function() {
-  var extension = '.cs';
+  var extension = '.cs';  
+  var classname = this.classNameWithoutExtension(extension);
+  if (classname.endsWith("Controller")){
+     classname = classname.substr(0, classname.length - "Controller".length);
+  }
   this.generateTemplateFile(
     'MvcController.cs',
     extension, {
       namespace: this.namespace(),
-      classname: this.classNameWithoutExtension(extension)
+      classname: classname
     }
   );
 };

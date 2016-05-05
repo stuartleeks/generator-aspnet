@@ -54,6 +54,9 @@ var AspnetGenerator = yeoman.generators.Base.extend({
         message: 'What type of application do you want to create?',
         choices: [
           {
+            name: 'DECODEDConf demo',
+            value: 'decodeddemo'
+          }, {
             name: 'Empty Application',
             value: 'empty'
           }, {
@@ -124,6 +127,9 @@ var AspnetGenerator = yeoman.generators.Base.extend({
       var done = this.async();
       var app = '';
       switch (this.type) {
+        case 'decodeddemo':
+          app = 'decoded-demo';
+          break;
         case 'empty':
           app = 'EmptyApplication';
           break;
@@ -271,6 +277,44 @@ var AspnetGenerator = yeoman.generators.Base.extend({
         this.fs.copyTpl(this.templatePath('Controllers/HomeController.cs'), this.applicationName + '/Controllers/HomeController.cs', this.templatedata);
         // Views
         this.fs.copyTpl(this.templatePath('Views/**/*'), this.applicationName + '/Views', this.templatedata);
+        
+        // wwwroot - the content in the wwwroot does not include any direct references or imports
+        // So again it is copied 1-to-1 - but tests cover list of all files
+        this.fs.copy(this.templatePath('wwwroot/**/*'), this.applicationName + '/wwwroot');
+        
+        // UI Component Overrides
+        // If the developer has placed anything in overrides/ui-module/project-type/**/* then use it
+        this.fs.copyTpl(this.templatePath('/../../overrides/' + this.ui + '/' + this.type + '/**/*'), this.applicationName + '/', this.templatedata);
+        
+        this.template(this.sourceRoot() + '/NuGet-ci.config', this.applicationName + '/NuGet.config', this.templatedata); // REMOVE this for release of dotnet core - used to direct to ci feeds until then ;-)
+ 
+        break;
+      case 'decodeddemo':
+        this.sourceRoot(path.join(__dirname, '../templates/projects/' + this.type));
+        // Grunt or Gulp
+        if (this.options.grunt) {
+          this.fs.copyTpl(this.templatePath('Gruntfile.js'), this.applicationName + '/Gruntfile.js', this.templatedata);
+        } else {
+          this.fs.copyTpl(this.templatePath('gulpfile.js'), this.applicationName + '/gulpfile.js', this.templatedata);
+        }
+        // individual files (configs, etc)
+        this.fs.copyTpl(this.sourceRoot() + '/../../Dockerfile.txt', this.applicationName + '/Dockerfile', this.templatedata);
+        this.fs.copy(this.templatePath('.bowerrc'), this.applicationName + '/.bowerrc');
+        this.fs.copy(this.sourceRoot() + '/../../gitignore.txt', this.applicationName + '/.gitignore');
+        this.fs.copyTpl(this.templatePath('bower.json'), this.applicationName + '/bower.json', this.templatedata);
+        this.fs.copyTpl(this.templatePath('appsettings.json'), this.applicationName + '/appsettings.json', this.templatedata);
+        this.fs.copyTpl(this.templatePath('package.json'), this.applicationName + '/package.json', this.templatedata);
+        this.fs.copyTpl(this.templatePath('project.json'), this.applicationName + '/project.json', this.templatedata);
+        this.fs.copy(this.templatePath('README.md'), this.applicationName + '/README.md');
+        this.fs.copyTpl(this.templatePath('Startup.cs'), this.applicationName + '/Startup.cs', this.templatedata);
+        this.fs.copyTpl(this.templatePath('Program.cs'), this.applicationName + '/Program.cs', this.templatedata);
+        // Controllers
+        this.fs.copyTpl(this.templatePath('Controllers/HomeController.cs'), this.applicationName + '/Controllers/HomeController.cs', this.templatedata);
+        // Views
+        this.fs.copyTpl(this.templatePath('Views/**/*'), this.applicationName + '/Views', this.templatedata);
+
+        // TagHelpers
+        this.fs.copyTpl(this.templatePath('TagHelpers/**/*'), this.applicationName + '/TagHelpers', this.templatedata);
         
         // wwwroot - the content in the wwwroot does not include any direct references or imports
         // So again it is copied 1-to-1 - but tests cover list of all files
