@@ -23,7 +23,7 @@ namespace  <%= namespace %>
                     source.ReloadOnChange = true;
                 })
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
+                ;
             Configuration = builder.Build();
         }
 
