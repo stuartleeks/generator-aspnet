@@ -1,13 +1,8 @@
 FROM stuartleeks/aspnet-cached
 
-
-COPY project.json /app/project.json
-COPY NuGet.config /app/NuGet.config
+COPY . /app
 WORKDIR /app
 RUN ["dotnet", "restore"]
-COPY . /app
-
-RUN ["dotnet", "build"]
 
 EXPOSE 5000
 ENTRYPOINT ["dotnet", "run"]
